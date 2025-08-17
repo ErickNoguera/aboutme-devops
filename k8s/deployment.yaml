@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aboutme-devops-deployment
+  labels:
+    app: aboutme-devops
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: aboutme-devops
+  template:
+    metadata:
+      labels:
+        app: aboutme-devops
+    spec:
+      containers:
+      - name: aboutme-devops
+        image: aboutme-devops:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Never
