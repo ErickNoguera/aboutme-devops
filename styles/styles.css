@@ -1,0 +1,232 @@
+/* Estilos generales */
+body {
+    background-color: rgb(34, 130, 209);
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header,
+footer {
+    background-color: #333;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+}
+
+main {
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+h1 {
+    align-items: center;
+    font-size: 50px;
+}
+
+
+
+h2 {
+    margin-bottom: 50px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+p {
+    color: #000000;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+.nav-enlaces {
+    display: flex;
+    justify-content: center;
+    gap: 400px;
+}
+
+
+.mi-enlace {
+    color: rgb(34, 130, 209);
+    text-decoration: none;
+    padding: 10px 20px;
+}
+
+.mi-enlace:hover {
+    background-color: #080808;
+}
+
+.mi-foto img {
+    max-width: 15%;
+    margin-bottom: 10px;
+    border-radius: 50%;
+}
+
+.tecnologias {
+    display: flex;
+    text-decoration: none;
+    font-weight: bold;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.tecnologia {
+    width: 100px;
+    text-align: center;
+}
+
+.tecnologia img {
+    max-width: 200%;
+}
+
+
+#actividad-form {
+    background-color: #b3adad;
+    margin-bottom: 20px;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#actividad-form label {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#actividad-form input,
+#actividad-form textarea {
+    background-color: #f5f3f3;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+#actividad-form button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+#actividad-form button:hover {
+    background-color: #080808;
+    font-size: 20px;
+}
+
+.actividad {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.actividad img {
+    max-width: 100%;
+    margin-bottom: 10px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 1rem;
+    padding: 16px;
+    margin: 16px;
+    text-align: center;
+    max-width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #cdd0d1;
+}
+
+.card h3 {
+    font-size: 1.5em;
+    margin: 0.5em 0;
+    text-align: center;
+}
+
+.card p {
+    font-size: 1em;
+    color: #555;
+    margin: 0.5em 0;
+}
+
+.card img {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+#actividades-container {
+    display: flex;
+}
+
+/* Media query para pantallas pequeñas (menos de 768px) */
+@media (max-width: 768px) {
+    .nav-enlaces {
+        flex-direction: column;
+    }
+
+    .gap-400 {
+        display: none;
+    }
+
+    .main,
+    header,
+    footer,
+    p,
+    h2,
+    h1,
+    .card,
+    .card h3,
+    .card p {
+        padding: 0;
+        margin: 0;
+    }
+}
+
+/* Media query para pantallas medianas (entre 768px y 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .nav-enlaces {
+        gap: 200px;
+    }
+}
+
+/* Media query para pantallas grandes (más de 1024px) */
+@media (min-width: 1025px) {
+    .nav-enlaces {
+        gap: 400px;
+    }
+}
+
+/* Media query para pantallas muy pequeñas (menos de 480px) */
+@media (max-width: 480px) {
+
+    .main,
+    header,
+    footer,
+    p,
+    h2,
+    h1,
+    .card,
+    .card h3,
+    .card p {
+        padding-top: 0;
+        padding-bottom: 0;
+        padding-left: 0;
+        padding-right: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
