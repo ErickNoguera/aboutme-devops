@@ -1,6 +1,6 @@
 # 🚀 Aboutme DevOps
 
-**Aboutme DevOps** es un proyecto que implementa tecnologías modernas de **DevOps** sobre una aplicación web personal. Este proyecto demuestra la containerización, orquestación y monitoreo de una aplicación usando **Docker**, **Kubernetes**, **Helm** y **Grafana**.
+**Aboutme DevOps** es un proyecto que implementa tecnologías modernas de **DevOps** sobre una aplicación web personal. Este proyecto demuestra la containerización, orquestación, monitoreo y **simulación de fallos** usando **Docker**, **Kubernetes**, **Helm**, **Prometheus** y **Grafana**.
 
 ## 🌟 Descripción
 
@@ -10,8 +10,9 @@ Este proyecto toma una aplicación web personal simple (HTML, CSS, JavaScript) y
 - **Orquestación** con Kubernetes  
 - **Gestión de paquetes** con Helm
 - **Monitoreo y visualización** con Grafana y Prometheus
+- **Simulación de fallos** para demostraciones DevOps
 
-La aplicación original presenta una landing page personal con funcionalidad para agregar tarjetas de actividades favoritas de forma dinámica.
+La aplicación presenta una landing page personal con funcionalidad para agregar tarjetas de actividades favoritas de forma dinámica, ahora servida por un **servidor Express** con endpoints de monitoreo y demo.
 
 ## ✨ Características de la Aplicación
 
@@ -19,7 +20,9 @@ La aplicación original presenta una landing page personal con funcionalidad par
 ✅ **Formulario interactivo** para agregar actividades favoritas  
 ✅ **Generación dinámica** de cards con imagen, título y descripción  
 ✅ **Funcionalidad de eliminación** de cards (click en la card)  
-✅ **Diseño responsivo** con HTML y CSS puros
+✅ **Diseño responsivo** con HTML y CSS puros  
+✅ **Servidor Express** con endpoints de salud y demo  
+✅ **Endpoints de simulación** para fallos y estrés  
 
 ## 🛠️ Stack Tecnológico
 
@@ -27,7 +30,10 @@ La aplicación original presenta una landing page personal con funcionalidad par
 - **HTML5** - Estructura semántica
 - **CSS3** - Estilos y diseño responsivo  
 - **JavaScript** - Manipulación del DOM y lógica de la aplicación
-- **Node.js + live-server** - Servidor de desarrollo
+
+### Backend
+- **Node.js** - Runtime de JavaScript
+- **Express.js** - Framework web para APIs y servidor estático
 
 ### DevOps
 - **Docker** - Containerización de la aplicación
@@ -35,6 +41,7 @@ La aplicación original presenta una landing page personal con funcionalidad par
 - **Helm** - Gestión de charts de Kubernetes
 - **Grafana** - Dashboards y visualización de métricas
 - **Prometheus** - Recolección de métricas y monitoreo
+- **Minikube** - Kubernetes local para desarrollo
 
 ## 📦 Requisitos Previos
 
@@ -60,64 +67,99 @@ cd aboutme-devops
 # Instalar dependencias
 npm install
 
-# Ejecutar la aplicación
+# Ejecutar la aplicación con Express
 npm start
 ```
 La aplicación estará disponible en `http://localhost:8080`
 
+**Endpoints disponibles:**
+- `/` - Aplicación principal
+- `/health` - Health check
+- `/demo/fail` - Simular fallo del servidor (solo desarrollo)
+- `/demo/stress` - Simular alta carga de CPU (solo desarrollo)
+
 ### 3. Ejecutar con Docker
 ```bash
 # Construir la imagen
-docker build -t aboutme-devops .
+docker build -t aboutme-devops:v2 .
 
 # Ejecutar el contenedor
-docker run -p 8080:8080 aboutme-devops
+docker run -p 8080:8080 aboutme-devops:v2
 ```
 
-### 4. Desplegar en Kubernetes
+### 4. Desplegar en Kubernetes con minikube
 ```bash
 # Iniciar minikube
 minikube start
 
-# Aplicar manifiestos de Kubernetes
-kubectl apply -f k8s/
+# Cargar imagen en minikube
+minikube image load aboutme-devops:v2
 
-# Ver el estado de los pods
-kubectl get pods
+# Desplegar con Helm
+helm install aboutme-app ./aboutme-helm-chart
 
-# Acceder a la aplicación
-kubectl port-forward service/aboutme-service 8080:80
+# Obtener URL de la aplicación
+minikube service aboutme-app-aboutme-helm-chart --url
 ```
 
-### 5. Desplegar con Helm
+### 5. Instalar stack de monitoreo
 ```bash
-# Instalar el chart
-helm install aboutme-app ./helm-chart
+# Agregar repositorio de Prometheus
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
 
-# Ver el estado del release
-helm status aboutme-app
+# Instalar Prometheus + Grafana
+helm install monitoring prometheus-community/kube-prometheus-stack
+
+# Acceder a Grafana
+kubectl port-forward service/monitoring-grafana 3000:80
+```
+
+**Credenciales de Grafana:**
+- Usuario: `admin`
+- Password: `prom-operator`
+
+## 🎭 Demostración de Fallos
+
+Para demostraciones DevOps, la aplicación incluye endpoints que simulan fallos:
+
+### Simular fallo del servidor
+```bash
+curl http://[minikube-url]/demo/fail
+```
+- Devuelve error 500
+- Termina el proceso después de 2 segundos
+- Kubernetes reinicia automáticamente el pod
+
+### Simular alta carga de CPU
+```bash
+curl http://[minikube-url]/demo/stress
+```
+- Ejecuta carga intensiva por 10 segundos
+- Permite observar métricas de CPU en Grafana
+
+### Verificar auto-recuperación
+```bash
+# Ver pods reiniciándose
+kubectl get pods -w
+
+# Ver logs de la aplicación
+kubectl logs -f [pod-name]
 ```
 
 ## 📊 Monitoreo con Grafana
 
-### Instalar stack de monitoreo
-```bash
-# Agregar repositorio de Prometheus
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+### Métricas disponibles:
+- **CPU y memoria** de pods
+- **Request rate** y latencia
+- **Errores HTTP** (500, 404)
+- **Estado de pods** (running, restarting)
+- **Resource utilization**
 
-# Instalar Prometheus + Grafana
-helm install monitoring prometheus-community/kube-prometheus-stack
-```
-
-### Acceder a Grafana
-```bash
-# Port-forward para acceder a Grafana
-kubectl port-forward service/monitoring-grafana 3000:80
-
-# Credenciales por defecto:
-# Usuario: admin
-# Password: prom-operator
-```
+### Dashboards recomendados:
+- Kubernetes Cluster Monitoring
+- Node Exporter Full
+- Kubernetes Pod Monitoring
 
 ## 📁 Estructura del Proyecto
 
@@ -126,34 +168,65 @@ aboutme-devops/
 ├── assets/                 # Imágenes y recursos estáticos
 ├── scripts/               # JavaScript de la aplicación
 ├── styles/                # Archivos CSS
-├── k8s/                   # Manifiestos de Kubernetes
-├── helm-chart/            # Chart de Helm
+├── aboutme-helm-chart/    # Chart de Helm
+│   ├── templates/         # Templates de Kubernetes
+│   ├── values.yaml        # Configuración del chart
+│   └── Chart.yaml         # Metadatos del chart
 ├── Dockerfile             # Configuración de Docker
-├── .dockerignore          # Archivos ignorados por Docker
+├── server.js              # Servidor Express con endpoints
 ├── package.json           # Dependencias de Node.js
 └── index.html             # Página principal
 ```
 
-## 🎯 Objetivos de Aprendizaje
+## 🎯 Casos de Uso DevOps
 
-Este proyecto demuestra competencias en:
+### Para Entrevistas Técnicas:
+1. **Demostrar containerización** - `docker build` y `docker run`
+2. **Mostrar orquestación** - Despliegue en Kubernetes
+3. **Simular incidentes** - Endpoints `/demo/fail` y `/demo/stress`
+4. **Observabilidad** - Métricas en tiempo real con Grafana
+5. **Auto-recuperación** - Kubernetes reinicia pods automáticamente
 
-- **Containerización** de aplicaciones web
-- **Orchestración** con Kubernetes
-- **Infrastructure as Code** con Helm
-- **Monitoring** y observabilidad
-- **CI/CD** y GitOps workflows
-- **Best practices** de DevOps
+### Para Aprendizaje:
+- Migración de aplicación legacy a contenedores
+- Implementación de health checks
+- Configuración de monitoreo
+- Simulación de fallos controlados
+- Best practices de DevOps
 
 ## 🔍 Características DevOps Implementadas
 
-- ✅ **Multi-stage Docker builds** para optimización
-- ✅ **Kubernetes deployments** con alta disponibilidad
+- ✅ **Express server** con health checks
+- ✅ **Kubernetes deployments** con auto-recuperación
 - ✅ **Helm charts** parametrizables
-- ✅ **Health checks** y readiness probes
+- ✅ **Health y readiness probes**
 - ✅ **Resource limits** y requests
-- ✅ **Monitoring stack** completo
-- ✅ **Grafana dashboards** personalizados
+- ✅ **Monitoring stack** completo con Prometheus
+- ✅ **Grafana dashboards** para visualización
+- ✅ **Failure simulation** para demos
+- ✅ **Automated recovery** con Kubernetes
+
+## 🎪 Demo para Entrevistas
+
+### Flujo completo de demostración:
+1. **Mostrar aplicación funcionando** en Kubernetes
+2. **Abrir Grafana** con métricas normales
+3. **Simular fallo** con `/demo/fail`
+4. **Observar en Grafana** el incremento de errores
+5. **Mostrar auto-recuperación** de Kubernetes
+6. **Explicar observabilidad** y monitoreo
+
+### Scripts útiles:
+```bash
+# Ver estado general
+kubectl get all
+
+# Monitorear pods en tiempo real
+kubectl get pods -w
+
+# Seguir logs en tiempo real
+kubectl logs -f deployment/aboutme-app-aboutme-helm-chart
+```
 
 ## 🤝 Contribuciones
 
@@ -171,4 +244,4 @@ Este proyecto no cuenta con una licencia específica.
 
 ---
 
-📌 *Proyecto creado por **Erick Noguera** como demostración de habilidades en DevOps, Kubernetes y tecnologías de containerización.* 🚀
+📌 *Proyecto creado por **Erick Noguera** como demostración de habilidades en DevOps, Kubernetes, monitoreo y simulación de fallos para entrevistas técnicas.* 🚀
